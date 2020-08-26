@@ -65,11 +65,13 @@ public class Main {
                                 @Override
                                 public void run() {
                                     try {
-                                        print("\rExecuting " + Telegram.lastMessage);
-                                        print("\n");
                                         if (Telegram.lastMessage.equals("/start") || loggedIn){
+                                            print("\rExecuting " + Telegram.lastMessage);
+                                            print("\n");
                                             Method runCommandMethod = Commands.class.getMethod(Telegram.lastMessage.replace("/", ""));
                                             runCommandMethod.invoke(Telegram.lastMessage.replace("/", ""));
+                                        } else {
+                                            Telegram.sendMessage("You must login in first with /start");
                                         }
                                     } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException err) {
                                         try {
@@ -77,11 +79,13 @@ public class Main {
                                         } catch (IOException | JSONException e) {
                                             e.printStackTrace();
                                         }
+                                    } catch (JSONException | IOException e) {
+                                        e.printStackTrace();
                                     }
-                            }
+                                }
                         } ).start();
                     } else if (Telegram.lastMessage.equals("invalid_message")) {
-
+                        Telegram.sendMessage("Invalid message");
                     }
                 }
                 print("\rLast message update: " + new Date());
