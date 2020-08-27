@@ -18,7 +18,7 @@ public class Telegram {
 
     public static JSONObject telegram(String method, String args) throws IOException, JSONException {
         URL telegramAPIUrl = new URL("https://api.telegram.org/bot{bot_token}/{method}{args}".replace("{bot_token}",
-                botToken).replace("{method}", method).replace("{args}", args));
+                botToken).replace("{method}", method).replace("{args}", args).replace(" ", "%20"));
         BufferedReader bufferedReader = new BufferedReader(
                 new InputStreamReader(telegramAPIUrl.openStream()));
 
