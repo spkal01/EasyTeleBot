@@ -93,3 +93,12 @@ the Telegram.getUpdates() function. There is an example:
         }
     }
     ```
+ ## 5. Building the bot
+ * For building the bot, you can use IntelliJ IDEA and open the project for building, or
+ you can build with `ant`.
+ * For building with `ant`:
+     ```
+    $ ant
+    ```
+   * You will get the output jar at out/artifacts/EasyTeleBot_jar/EasyTeleBot.jar
+   * For running it just do: `java -jar path_to_jar` (`java -jar out/artifacts/EasyTeleBot_jar/EasyTeleBot.jar`)
