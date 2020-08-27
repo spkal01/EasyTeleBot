@@ -33,8 +33,12 @@ public class Telegram {
         return new JSONObject(response.toString());
     }
 
-    public static void sendMessage(String message) throws IOException, JSONException {
-        telegram("sendMessage", "?chat_id=" + chatId + "&text=" + message);
+    public static void sendMessage(String message) {
+        try {
+            telegram("sendMessage", "?chat_id=" + chatId + "&text=" + message);
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void getUpdates() throws IOException, JSONException {
