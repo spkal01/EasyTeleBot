@@ -12,6 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Date;
 
+import static com.daniml3.Utils.classExists;
 import static com.daniml3.Utils.print;
 
 // We want an infinite loop so this warning is useless
@@ -65,26 +66,36 @@ public class Main {
                                 @Override
                                 public void run() {
                                     try {
+                                        // Execute the command if it is the /start command (for logging in) or if the user is already logged
                                         if (Telegram.lastMessage.equals("/start") || loggedIn){
-                                            print("\rExecuting " + Telegram.lastMessage);
-                                            print("\n");
-                                            Method runCommandMethod = Commands.class.getMethod(Telegram.lastMessage.replace("/", ""));
+                                            print("\rExecuting " + Telegram.lastMessage + "\n");
+                                            Method runCommandMethod;
+                                            /*
+                                            Check if the CustomCommands class exists. If so, check if the given method (command) exists. If it exists, use the CustomCommand class for
+                                            running the command. Else, Use the Commands class
+                                            */
+                                            Class<?> commandClass;
+                                            try {
+                                                Class.forName("com.daniml3.CustomCommands").getMethod(Telegram.lastMessage.replace("/", ""));
+                                                commandClass = Class.forName("com.daniml3.CustomCommands");
+                                            } catch (ClassNotFoundException | NoSuchMethodException e) {
+                                                commandClass = Class.forName("com.daniml3.Commands");
+                                            }
+                                            runCommandMethod = commandClass.getMethod(Telegram.lastMessage.replace("/", ""));
                                             runCommandMethod.invoke(Telegram.lastMessage.replace("/", ""));
                                         } else {
+                                            // If the user sent a command that isn't /start and it isn't logged in, send a warning
                                             Telegram.sendMessage("You must login in first with /start");
                                         }
-                                    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException err) {
-                                        try {
-                                            Telegram.sendMessage("Command not found");
-                                        } catch (IOException | JSONException e) {
-                                            e.printStackTrace();
-                                        }
-                                    } catch (JSONException | IOException e) {
-                                        e.printStackTrace();
+                                    } catch (JSONException | IOException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException err) {
+                                        // If the command isn't found, send a message to the user
+                                        err.printStackTrace();
+                                        try {Telegram.sendMessage("Command not found");} catch (IOException | JSONException e) {e.printStackTrace();}
                                     }
                                 }
                         } ).start();
                     } else if (Telegram.lastMessage.equals("invalid_message")) {
+                        // Warn the user about an invalid message (like a GIF)
                         Telegram.sendMessage("Invalid message");
                     }
                 }

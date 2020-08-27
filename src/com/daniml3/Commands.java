@@ -4,7 +4,7 @@ import org.json.JSONException;
 
 import java.io.IOException;
 
-public final class Commands {
+public class Commands {
     public static void start() throws IOException, JSONException {
         int attempts = 3;
         Telegram.sendMessage("Enter your password:");
