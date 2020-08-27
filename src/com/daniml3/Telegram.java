@@ -7,6 +7,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 public class Telegram {
     public static int updateId = 0;
@@ -35,7 +37,7 @@ public class Telegram {
 
     public static void sendMessage(String message) {
         try {
-            telegram("sendMessage", "?chat_id=" + chatId + "&text=" + message);
+            telegram("sendMessage", "?chat_id=" + chatId + "&text=" + URLEncoder.encode(message, StandardCharsets.UTF_8));
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
