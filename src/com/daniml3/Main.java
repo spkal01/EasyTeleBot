@@ -12,7 +12,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Date;
 
-import static com.daniml3.Utils.classExists;
 import static com.daniml3.Utils.print;
 
 // We want an infinite loop so this warning is useless
