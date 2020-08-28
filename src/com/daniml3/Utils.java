@@ -1,8 +1,10 @@
 package com.daniml3;
 
-import java.io.*;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Objects;
 
 public class Utils {
     public static void print(String args) {
@@ -20,6 +22,14 @@ public class Utils {
             outputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+    public static File[] listFiles(File directory,String startPatten ,String extension) {
+        // startPattern and extension may be null if you don't want to use any patterns
+        if (extension == null && startPatten == null) {
+            return directory.listFiles();
+        } else {
+            return directory.listFiles((dir, filename) -> filename.startsWith(startPatten) && filename.endsWith(Objects.requireNonNull(extension)));
         }
     }
 }
