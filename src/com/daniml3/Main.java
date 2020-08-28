@@ -23,10 +23,12 @@ public class Main {
         File configFile = new File(System.getenv("HOME") + "/" + Constants.CONFIG_FILE);
 
         if (!configFile.exists()) {
+            // If the config file doesn't exist, print a template
             print("ERROR: the file config.json doesn't exist.\nCreate it with the following template and try again.");
             print("{\n  \"bot_token\": \"your_bot_token\",\n  \"chat_id\" : \"your_chat_id\",\n  \"password\" : \"bot_password\"\n}");
             System.exit(1);
         } else {
+            // Load the config file to a bufferReader and then parse the JSON. If it isn't valid, throw an error
             try (BufferedReader bufferedReader = new BufferedReader(new FileReader(configFile))) {
                 StringBuilder stringBuilder = new StringBuilder();
                 String line = bufferedReader.readLine();
@@ -95,9 +97,6 @@ public class Main {
                                     Telegram.sendMessage("Command not found");
                                 }
                             }).start();
-                    } else if (Telegram.lastMessage.equals("invalid_message")) {
-                        // Warn the user about an invalid message (like a GIF)
-                        Telegram.sendMessage("Invalid message");
                     }
                 }
                 print("\rLast message update: " + new Date());
