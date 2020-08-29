@@ -68,17 +68,17 @@ public class Main {
                                     if (command.equals("start") || loggedIn) {
                                         print("\nExecuting " + Telegram.lastMessage + "\n");
                                         /*
-                                        Check if the CustomCommands class exists. If so, check if the given method (command) exists.
-                                        If it exists, use the CustomCommand class for running the command. Else, use the Commands class.
+                                        * Check if the CustomCommands class exists. If so, check if the given method (command) exists.
+                                        * If it exists, use the CustomCommand class for running the command. Else, use the Commands class.
                                         */
                                         Class<?> commandClass;
                                         try {
                                             Class.forName("com.daniml3.CustomCommands").getMethod(command);
                                             commandClass = Class.forName("com.daniml3.CustomCommands");
                                             /*
-                                            ClassNotFoundException means that the CustomCommands class doesn't exist
-                                            NoSuchMethodException means that the CustomCommands class exists, but doesn't contain the command.
-                                            So, if any of this exceptions are thrown, use the Commands class.
+                                            * ClassNotFoundException means that the CustomCommands class doesn't exist
+                                            * NoSuchMethodException means that the CustomCommands class exists, but doesn't contain the command.
+                                            * So, if any of this exceptions are thrown, use the Commands class.
                                             */
                                         } catch (ClassNotFoundException | NoSuchMethodException e) {
                                             commandClass = Class.forName("com.daniml3.Commands");

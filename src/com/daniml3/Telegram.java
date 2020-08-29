@@ -44,8 +44,8 @@ public class Telegram {
     public static void getUpdates() throws IOException, JSONException {
         JSONObject telegramResponse;
         /*
-        If the updateId is 0 (the default value), get the last telegram updates without any offset
-        If it isn't 0, this means an update was already executed, so set the offset to the latest update id
+        * If the updateId is 0 (the default value), get the last telegram updates without any offset
+        * If it isn't 0, this means an update was already executed, so set the offset to the latest update id
         */
         if (updateId == 0) {
             telegramResponse = telegram("getUpdates","");
@@ -60,8 +60,8 @@ public class Telegram {
         updateId = telegramResponse.getInt("update_id");
 
         /*
-         Save the last message in the lastMessage String. If the key text isn't in the message, this means that the user sent a non-text object, like a GIF.
-         In the case the user didn't send text, set the last message to invalid_message
+        * Save the last message in the lastMessage String. If the key text isn't in the message, this means that the user sent a non-text object, like a GIF.
+        * In the case the user didn't send text, set the last message to invalid_message
         */
         try {lastMessage = telegramResponse.getJSONObject("message").getString("text");} catch (JSONException ignore) {}
     }
