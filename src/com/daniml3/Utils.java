@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.util.Objects;
 
 public class Utils {
@@ -30,6 +31,17 @@ public class Utils {
             return directory.listFiles();
         } else {
             return directory.listFiles((dir, filename) -> filename.startsWith(startPatten) && filename.endsWith(Objects.requireNonNull(extension)));
+        }
+    }
+    public static Object getValueOf(Class theClass, String value) throws NoSuchFieldException, IllegalAccessException {
+        Field field = theClass.getField(value);
+        String fieldType = field.getType().toString();
+        if (fieldType.equals("int")) {
+            return field.getInt(theClass);
+        } else if (fieldType.equals("double")) {
+            return field.getDouble(theClass);
+        } else {
+            return field.get(theClass);
         }
     }
 }
