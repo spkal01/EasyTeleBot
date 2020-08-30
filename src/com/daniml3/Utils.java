@@ -1,9 +1,6 @@
 package com.daniml3;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.util.Objects;
 
@@ -43,5 +40,32 @@ public class Utils {
         } else {
             return field.get(theClass);
         }
+    }
+    public static String readFile(File file) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+        StringBuilder stringBuilder = new StringBuilder();
+        String line = bufferedReader.readLine();
+
+        while (line != null) {
+            stringBuilder.append(line);
+            line = bufferedReader.readLine();
+        }
+        return stringBuilder.toString();
+    }
+    public static long getSize(File file) {
+        return file.length();
+    }
+    public static String getLineFromFile(File file, String pattern) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+        StringBuilder stringBuilder = new StringBuilder();
+        String line = bufferedReader.readLine();
+
+        while (line != null) {
+            if (line.contains(pattern)) {
+                stringBuilder.append(line);
+            }
+            line = bufferedReader.readLine();
+        }
+        return stringBuilder.toString();
     }
 }
