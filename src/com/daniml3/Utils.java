@@ -5,15 +5,20 @@ import java.lang.reflect.Field;
 import java.util.Objects;
 
 public class Utils {
+    // Shortened System.out.print()
     public static void print(String args) {
         System.out.print(args);
     }
+
+    // Clear the console content. Doesn't work on IDEs
     public static void clearScreen() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
     }
+
+    // Write a string to a file
     public static void writeToFile(String file, String data) {
-        OutputStream outputStream = null;
+        OutputStream outputStream;
         try {
             outputStream = new FileOutputStream(new File(file));
             outputStream.write(data.getBytes(), 0, data.length());
@@ -22,6 +27,8 @@ public class Utils {
             e.printStackTrace();
         }
     }
+
+    // Return the list of files in a directory. The function can follow a pattern.
     public static File[] listFiles(File directory,String startPatten ,String extension) {
         // startPattern and extension may be null if you don't want to use any patterns
         if (extension == null && startPatten == null) {
@@ -30,7 +37,9 @@ public class Utils {
             return directory.listFiles((dir, filename) -> filename.startsWith(startPatten) && filename.endsWith(Objects.requireNonNull(extension)));
         }
     }
-    public static Object getValueOf(Class theClass, String value) throws NoSuchFieldException, IllegalAccessException {
+
+    // Get a specific value of an object in a specific class with its name in a string
+    public static Object getValueOf(Class<?> theClass, String value) throws NoSuchFieldException, IllegalAccessException {
         Field field = theClass.getField(value);
         String fieldType = field.getType().toString();
         if (fieldType.equals("int")) {
@@ -41,6 +50,8 @@ public class Utils {
             return field.get(theClass);
         }
     }
+
+    // Read from a file and return its content
     public static String readFile(File file) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
         StringBuilder stringBuilder = new StringBuilder();
@@ -52,9 +63,8 @@ public class Utils {
         }
         return stringBuilder.toString();
     }
-    public static long getSize(File file) {
-        return file.length();
-    }
+
+    // Get lines from a file matching a pattern
     public static String getLineFromFile(File file, String pattern) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
         StringBuilder stringBuilder = new StringBuilder();
@@ -67,5 +77,17 @@ public class Utils {
             line = bufferedReader.readLine();
         }
         return stringBuilder.toString();
+    }
+
+    // Shortened Thread.sleep function
+    public static void sleep(int mills) {
+        try {Thread.sleep(mills);} catch ( InterruptedException ignore) {}
+    }
+
+    // Return the exception output in form of a string
+    public static String stackTraceToString(Exception e) {
+        StringWriter errors = new StringWriter();
+        e.printStackTrace(new PrintWriter(errors));
+        return errors.toString();
     }
 }

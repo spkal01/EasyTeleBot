@@ -3,12 +3,8 @@ package com.daniml3;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Date;
 
 import static com.daniml3.Utils.print;
 
@@ -18,7 +14,7 @@ import static com.daniml3.Utils.print;
 public class Main {
     public static boolean loggedIn = false;
 
-    public static void main(String[] args) throws IOException, JSONException, InterruptedException {
+    public static void main(String[] args) throws IOException, JSONException {
         // Check if the config file exists. The default path is the user's home directory + config.json
         File configFile = new File(System.getenv("HOME") + "/" + Constants.CONFIG_FILE);
 
@@ -49,11 +45,7 @@ public class Main {
             }
         }
 
-        Utils.clearScreen();
-        print("################################################################################\n");
-        print("------------------------------TELEGRAM BOT RUNNING------------------------------\n");
-        print("Last message update: " + new Date());
-
+        InterfaceHandler.startInterface();
         boolean firstExecution = true;
         while (true) {
             Telegram.getUpdates();
@@ -62,11 +54,10 @@ public class Main {
                 if (Telegram.newMessage) {
                     if (Telegram.lastMessage.contains("/")) {
                             new Thread(() -> {
+                                String command = Telegram.lastMessage.replace("/", "");
                                 try {
-                                    String command = Telegram.lastMessage.replace("/", "");
                                     // Execute the command if it is the /start command (for logging in) or if the user is already logged
                                     if (command.equals("start") || loggedIn) {
-                                        print("\nExecuting " + Telegram.lastMessage + "\n");
                                         /*
                                         * Check if the CustomCommands class exists. If so, check if the given method (command) exists.
                                         * If it exists, use the CustomCommand class for running the command. Else, use the Commands class.
@@ -83,26 +74,34 @@ public class Main {
                                         } catch (ClassNotFoundException | NoSuchMethodException e) {
                                             commandClass = Class.forName("com.daniml3.Commands");
                                         }
+                                        InterfaceHandler.runningTasks.add(command);
                                         commandClass.getMethod(command).invoke(command);
+                                        InterfaceHandler.runningTasks.remove(command);
                                     } else {
                                         // If the user sent a command that isn't /start and it isn't logged in, send a warning
                                         Telegram.sendMessage("You must login in first with /start");
                                     }
                                 } catch (IllegalAccessException | InvocationTargetException | ClassNotFoundException e) {
                                     // Send a message to the user for possible exceptions
-                                    e.printStackTrace();
-                                    Telegram.sendMessage("Bot exception. Does your command exist? Check the bot log for details. Hint: " + e.getClass().getSimpleName());
+                                    Telegram.sendMessage("Bot exception. Does your command exist? Check the bot log for details. Hint: "
+                                            + e.getClass().getSimpleName());
+                                    /*
+                                    * Remove the command from the running tasks, add the warning with the exception name for 10 seconds
+                                    * and show the stacktrace
+                                    */
+                                    InterfaceHandler.runningTasks.remove(command);
+                                    InterfaceHandler.addWarning(e.getClass().getSimpleName(), 10);
+                                    InterfaceHandler.addStackTrace(Utils.stackTraceToString(e));
                                 } catch (NoSuchMethodException e) {
                                     // NoSuchMethodException means that the command doesn't exist
                                     Telegram.sendMessage("Command not found");
+                                    InterfaceHandler.runningTasks.remove(command);
                                 }
                             }).start();
                     }
                 }
-                print("\rLast message update: " + new Date());
             }
-            //noinspection BusyWait
-            Thread.sleep(1000);
+            Utils.sleep(1000);
             firstExecution = false;
         }
     }

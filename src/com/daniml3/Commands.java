@@ -20,6 +20,8 @@ public class Commands {
             }
             if (attempts == 0) {
                 Telegram.sendMessage("Stopping the bot due to security reasons");
+                Utils.clearScreen();
+                Utils.print("Stopping the bot as the user failed 3 times the password");
                 System.exit(1);
             }
         }
