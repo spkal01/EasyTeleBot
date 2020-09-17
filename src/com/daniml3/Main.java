@@ -15,12 +15,40 @@ public class Main {
     public static boolean loggedIn = false;
 
     public static void main(String[] args) throws IOException, JSONException {
+        String configFilePath = null;
+
+        // Check if the user passed arguments
+        if (args.length < 2) {
+            print(Constants.USAGE_MESSAGE);
+            System.exit(1);
+        }
+
+        // Parse all the arguments
+        String currentArg;
+        int i = 0;
+        while (i < args.length) {
+            currentArg = args[i];
+            if (args[i].equals("--config")) {
+                configFilePath = args[i+1];
+                i++;
+            } else {
+                print("Unknown argument " + currentArg + "\n");
+                System.exit(1);
+            }
+            i++;
+        }
+        if (configFilePath == null) {
+            print("Missing config file\n");
+            print(Constants.USAGE_MESSAGE);
+            System.exit(1);
+        }
+
         // Check if the config file exists. The default path is the user's home directory + config.json
-        File configFile = new File(System.getenv("HOME") + "/" + Constants.CONFIG_FILE);
+        File configFile = new File(configFilePath);
 
         if (!configFile.exists()) {
             // If the config file doesn't exist, print a template
-            print("ERROR: the file config.json doesn't exist.\nCreate it with the following template and try again.");
+            print("ERROR: the specified config file doesn't exist.\nCreate it with the following template and try again.");
             print("\n{\n  \"bot_token\": \"your_bot_token\",\n  \"chat_id\" : \"your_chat_id\",\n  \"password\" : \"bot_password\"\n}\n");
             System.exit(1);
         } else {
