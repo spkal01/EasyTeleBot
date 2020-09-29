@@ -34,12 +34,14 @@ public class InterfaceHandler {
     * If the seconds int is 0, leave the warning forever
     */
     public static void addWarning(String warning, int seconds) {
-        warnings.add(warning);
-        if (seconds != 0) {
-            new Thread(() -> {
-                Utils.sleep(seconds * 1000);
-                warnings.remove(warning);
-            }).start();
+        if (!warnings.contains(warning)) {
+            warnings.add(warning);
+            if (seconds != 0) {
+                new Thread(() -> {
+                    Utils.sleep(seconds * 1000);
+                    warnings.remove(warning);
+                }).start();
+            }
         }
     }
 
