@@ -12,8 +12,17 @@ public class Utils {
 
     // Clear the console content. Doesn't work on IDEs
     public static void clearScreen() {
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
+        try {
+            if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+                Runtime.getRuntime().exec("cmd /c cls");
+            } else {
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+            }
+        } catch (IOException e) {
+            InterfaceHandler.addWarning("Could not clear the screen correctly", 10);
+            InterfaceHandler.addStackTrace(Utils.stackTraceToString(e));
+        }
     }
 
     // Write a string to a file
