@@ -73,7 +73,9 @@ public class Main {
             }
         }
 
+        // Start the user interface
         InterfaceHandler.startInterface();
+
         boolean firstExecution = true;
         while (true) {
             Telegram.getUpdates();
