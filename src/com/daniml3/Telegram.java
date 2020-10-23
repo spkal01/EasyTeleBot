@@ -16,8 +16,8 @@ public class Telegram {
     public static String lastMessage;
     public static String botToken;
     public static String chatId;
-    public static String password;
-
+    public static String allowedUser;
+    
     public static JSONObject telegram(String method, String args) throws IOException, JSONException {
         URL telegramAPIUrl = new URL("https://api.telegram.org/bot" + botToken + "/" + method + args.replace(" ","%20"));
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(telegramAPIUrl.openStream()));
@@ -43,6 +43,7 @@ public class Telegram {
 
     public static void getUpdates() throws IOException, JSONException {
         JSONObject telegramResponse;
+        String messageOrigin;
         /*
         * If the updateId is 0 (the default value), get the last telegram updates without any offset
         * If it isn't 0, this means an update was already executed, so set the offset to the latest update id
@@ -50,19 +51,22 @@ public class Telegram {
         if (updateId == 0) {
             telegramResponse = telegram("getUpdates","");
         } else {
-            telegramResponse = telegram("getUpdates","?offset={update_id}".replace("{update_id}",String.valueOf(updateId)));
+            telegramResponse = telegram("getUpdates","?offset=" + updateId);
         }
         // Get the last JSON object from the result array
         telegramResponse = telegramResponse.getJSONArray("result").getJSONObject(telegramResponse.getJSONArray("result").length()-1);
 
-        //If the latest update id is higher than the previous update id, a new message was sent, so set the newMessage boolean to true
-        newMessage = updateId < telegramResponse.getInt("update_id");
-        updateId = telegramResponse.getInt("update_id");
 
-        /*
-        * Save the last message in the lastMessage String. If the key text isn't in the message, this means that the user sent a non-text object, like a GIF.
-        * In the case the user didn't send text, set the last message to invalid_message
-        */
-        try {lastMessage = telegramResponse.getJSONObject("message").getString("text");} catch (JSONException ignore) {}
+        try{
+            messageOrigin = telegramResponse.getJSONObject("message").getJSONObject("from").get("id").toString();
+            if (messageOrigin.equals(allowedUser)) {
+                lastMessage = telegramResponse.getJSONObject("message").getString("text");
+                newMessage = updateId < telegramResponse.getInt("update_id");
+            }
+        } catch (JSONException e) {
+                lastMessage = "";
+                newMessage = false;
+        }
+        updateId = telegramResponse.getInt("update_id");
     }
 }

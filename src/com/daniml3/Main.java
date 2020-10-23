@@ -12,8 +12,6 @@ import static com.daniml3.Utils.print;
 @SuppressWarnings("InfiniteLoopStatement")
 
 public class Main {
-    public static boolean loggedIn = false;
-
     public static void main(String[] args) throws IOException, JSONException {
         String configFilePath = null;
 
@@ -37,6 +35,7 @@ public class Main {
             }
             i++;
         }
+
         if (configFilePath == null) {
             print("Missing config file\n");
             print(Constants.USAGE_MESSAGE);
@@ -65,7 +64,7 @@ public class Main {
                     // Set the bot token and chat id according to the config in config.json
                     Telegram.botToken = new JSONObject(stringBuilder.toString()).getString("bot_token");
                     Telegram.chatId = new JSONObject(stringBuilder.toString()).getString("chat_id");
-                    Telegram.password = new JSONObject(stringBuilder.toString()).getString("password");
+                    Telegram.allowedUser = new JSONObject(stringBuilder.toString()).getString("allowed_user");
                 } catch (JSONException err) {
                     print("Error while parsing the config file");
                     System.exit(1);
@@ -79,38 +78,32 @@ public class Main {
         boolean firstExecution = true;
         while (true) {
             Telegram.getUpdates();
-            if (! firstExecution) {
+            if (!firstExecution) {
                 // If there is a new message, check if the message is valid and if it is a command
                 if (Telegram.newMessage) {
                     if (Telegram.lastMessage.contains("/")) {
                             new Thread(() -> {
                                 String command = Telegram.lastMessage.replace("/", "");
                                 try {
-                                    // Execute the command if it is the /start command (for logging in) or if the user is already logged
-                                    if (command.equals("start") || loggedIn) {
+                                    /*
+                                    * Check if the CustomCommands class exists. If so, check if the given method (command) exists.
+                                    * If it exists, use the CustomCommand class for running the command. Else, use the Commands class.
+                                    */
+                                    Class<?> commandClass;
+                                    try {
+                                        Class.forName("com.daniml3.CustomCommands").getMethod(command);
+                                        commandClass = Class.forName("com.daniml3.CustomCommands");
                                         /*
-                                        * Check if the CustomCommands class exists. If so, check if the given method (command) exists.
-                                        * If it exists, use the CustomCommand class for running the command. Else, use the Commands class.
+                                        * ClassNotFoundException means that the CustomCommands class doesn't exist
+                                        * NoSuchMethodException means that the CustomCommands class exists, but doesn't contain the command.
+                                        * So, if any of this exceptions are thrown, use the Commands class.
                                         */
-                                        Class<?> commandClass;
-                                        try {
-                                            Class.forName("com.daniml3.CustomCommands").getMethod(command);
-                                            commandClass = Class.forName("com.daniml3.CustomCommands");
-                                            /*
-                                            * ClassNotFoundException means that the CustomCommands class doesn't exist
-                                            * NoSuchMethodException means that the CustomCommands class exists, but doesn't contain the command.
-                                            * So, if any of this exceptions are thrown, use the Commands class.
-                                            */
-                                        } catch (ClassNotFoundException | NoSuchMethodException e) {
-                                            commandClass = Class.forName("com.daniml3.Commands");
-                                        }
-                                        InterfaceHandler.runningTasks.add(command);
-                                        commandClass.getMethod(command).invoke(command);
-                                        InterfaceHandler.runningTasks.remove(command);
-                                    } else {
-                                        // If the user sent a command that isn't /start and it isn't logged in, send a warning
-                                        Telegram.sendMessage("You must login in first with /start");
+                                    } catch (ClassNotFoundException | NoSuchMethodException e) {
+                                        commandClass = Class.forName("com.daniml3.Commands");
                                     }
+                                    InterfaceHandler.runningTasks.add(command);
+                                    commandClass.getMethod(command).invoke(command);
+                                    InterfaceHandler.runningTasks.remove(command);
                                 } catch (IllegalAccessException | InvocationTargetException | ClassNotFoundException e) {
                                     // Send a message to the user for possible exceptions
                                     Telegram.sendMessage("Bot exception. Does your command exist? Check the bot log for details. Hint: "
@@ -131,7 +124,6 @@ public class Main {
                     }
                 }
             }
-            Utils.sleep(1000);
             firstExecution = false;
         }
     }

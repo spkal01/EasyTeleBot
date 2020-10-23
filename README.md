@@ -46,14 +46,17 @@ src-|
 * First, you need to create a file in your home directory (variable $HOME on Shell), called config.json.
 The config file name can be customized from the Constants.java.
 The file format is:
-    ```
+```
     {
       "bot_token": "your_bot_token",
       "chat_id" : "your_chat_id",
-      "password" : "bot_password"
+      "allowed_user" : "user_id"
     }
-    ```
-* A password is needed because without it, everyone could use the bot.
+```
+* The bot_token field is the bot key that you can get from BotFather when you have created a new bot
+* The chat_id field is the chat id where the messages will be sent
+* The allowed_user is the user id whose commands will be accepted. If other users try to run commands, they will not be executed. In a near update this will be changed into a list so more than one user can execute the commands.
+
 * After creating the configuration file with your data, you need to create the commands.
 For creating your custom commands, you shouldn't edit the Commands.java as there are all
 the general bot commands, not the custom commands.

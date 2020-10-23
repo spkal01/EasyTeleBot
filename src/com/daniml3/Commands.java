@@ -1,29 +1,10 @@
 package com.daniml3;
 
-import org.json.JSONException;
-
-import java.io.IOException;
-
 public class Commands {
-    public static void start() throws IOException, JSONException {
-        int attempts = 3;
-        Telegram.sendMessage("Enter your password:");
-        while (true) {
-            Telegram.getUpdates();
-            if (Telegram.lastMessage.equals(Telegram.password) && Telegram.newMessage) {
-                Telegram.sendMessage("Logged in successfully");
-                Main.loggedIn = true;
-                break;
-            } else if (Telegram.newMessage) {
-                attempts--;
-                Telegram.sendMessage("Left attemps: "+ attempts);
-            }
-            if (attempts == 0) {
-                Telegram.sendMessage("Stopping the bot due to security reasons");
-                Utils.clearScreen();
-                Utils.print("Stopping the bot as the user failed 3 times the password");
-                System.exit(1);
-            }
-        }
+    public static void status() {
+        Telegram.sendMessage("Hey! I'm alive\nI'm running at {os}\nJava Runtime version: {jre}\nUser: {user}"
+                .replace("{os}",System.getProperty("os.name"))
+                .replace("{jre}",System.getProperty("java.version"))
+                .replace("{user}",System.getProperty("user.name")));
     }
 }
