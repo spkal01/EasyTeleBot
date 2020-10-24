@@ -48,7 +48,7 @@ public class Main {
         if (!configFile.exists()) {
             // If the config file doesn't exist, print a template
             print("ERROR: the specified config file doesn't exist.\nCreate it with the following template and try again.");
-            print("\n{\n  \"bot_token\": \"your_bot_token\",\n  \"chat_id\" : \"your_chat_id\",\n  \"password\" : \"bot_password\"\n}\n");
+            print("\n{\n  \"bot_token\": \"your_bot_token\",\n  \"chat_id\" : \"your_chat_id\",\n  \"allowed_user\" : \"allowed_user_id\"\n}\n");
             System.exit(1);
         } else {
             // Load the config file to a bufferReader and then parse the JSON. If it isn't valid, throw an error
