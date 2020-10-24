@@ -7,4 +7,8 @@ public class Commands {
                 .replace("{jre}",System.getProperty("java.version"))
                 .replace("{user}",System.getProperty("user.name")));
     }
-}
+    
+public static void build() {
+    code_to_execute;
+    }
+}    
