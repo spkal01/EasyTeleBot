@@ -99,4 +99,8 @@ public class Utils {
         e.printStackTrace(new PrintWriter(errors));
         return errors.toString();
     }
+
+    public static boolean stringStartsWith(String string, String character) {
+        return string.substring(0, 1).equals(character);
+    }
 }

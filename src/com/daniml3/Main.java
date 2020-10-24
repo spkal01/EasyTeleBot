@@ -81,7 +81,7 @@ public class Main {
             if (!firstExecution) {
                 // If there is a new message, check if the message is valid and if it is a command
                 if (Telegram.newMessage) {
-                    if (Telegram.lastMessage.contains("/")) {
+                    if (Utils.stringStartsWith(Telegram.lastMessage, "/")) {
                             new Thread(() -> {
                                 String command = Telegram.lastMessage.replace("/", "");
                                 try {
