@@ -9,6 +9,7 @@ public class Commands {
     }
  
     public static void build() {
-    code_to_execute;
+        Telegram.sendMessage("You sure you want yo start a build\nUser: {user}"
+                .replace("{user}",System.getProperty("user.name")))                             
     }
 }
